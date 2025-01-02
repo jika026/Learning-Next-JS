@@ -1,8 +1,20 @@
 import { notFound } from "next/navigation";
 
-export const dynamicParams = false;
+export const dynamicParams = true;
 
-async function generateStaticParams() {
+export async function generateMetadata({ params }) {
+  const id = params.id;
+  const res = await fetch(`http://localhost:4000/tickets/${id}`);
+
+  const ticket = await res.json();
+  console.log(res, ticket);
+
+  return {
+    title: `Jika Helpdesk | ${ticket.title}`,
+  };
+}
+
+export async function generateStaticParams() {
   const res = await fetch("http://localhost:4000/tickets");
 
   const tickets = await res.json();
@@ -22,6 +34,7 @@ async function getTicket(id) {
 }
 export default async function TicketDetails({ params }) {
   const ticket = await getTicket(params.id);
+
   return (
     <main>
       <nav>
